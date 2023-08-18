@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Relevamientos</string>
+    <string name="title_activity_clients_map">ClientsMapActivity</string>
+</resources>
