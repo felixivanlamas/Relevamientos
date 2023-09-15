@@ -4,6 +4,7 @@ import android.accounts.AuthenticatorDescription
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.relevamientos.R
@@ -14,23 +15,47 @@ class ProductAdapter( var products : MutableList<Product>) : RecyclerView.Adapte
     class ProductHolder(v: View) : RecyclerView.ViewHolder(v)
     {
         private var view : View
+        val chbItemProduct: CheckBox = itemView.findViewById(R.id.chb_item_product)
         init {
             this.view = v
         }
-        fun setProductDescription (description: String) {
-            val chb_item_product : TextView = view.findViewById(R.id.chb_item_product)
-            chb_item_product.text = description
+        fun bind ( product: Product) {
+            chbItemProduct.text = product.description
         }
 
     }
 
+    val selectedProductIds = mutableSetOf<Int>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.product_item,parent,false)
         return (ProductHolder(view))
     }
 
     override fun onBindViewHolder(holder: ProductHolder, position: Int) {
-        holder.setProductDescription(products[position].description)
+        val product = products[position]
+        holder.bind(product)
+
+        holder.chbItemProduct.isChecked = selectedProductIds.contains(product.id)
+
+        holder.chbItemProduct.setOnClickListener {
+            if (selectedProductIds.contains(product.id)) {
+                selectedProductIds.remove(product.id)
+            } else {
+                selectedProductIds.add(product.id)
+            }
+
+            notifyDataSetChanged()
+        }
+
+        holder.itemView.setOnClickListener {
+            if (selectedProductIds.contains(product.id)) {
+                selectedProductIds.remove(product.id)
+            } else {
+                selectedProductIds.add(product.id)
+            }
+
+            notifyDataSetChanged()
+        }
     }
 
     override fun getItemCount(): Int {

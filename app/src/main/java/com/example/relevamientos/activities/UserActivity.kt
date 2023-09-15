@@ -11,7 +11,15 @@ class UserActivity : AppCompatActivity(){
 
     lateinit var navHostFragment : NavHostFragment
     lateinit var bottomNavView : BottomNavigationView
+    private var selectedProducts: String = ""
 
+    fun setSelectedProducts(productsText: String) {
+        selectedProducts = productsText
+    }
+
+    fun getSelectedProducts(): String {
+        return selectedProducts
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)

@@ -5,10 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Client(
-    var id: Int,
-    var address: String,
-    var email: String,
-    var seller: String,
-    var activator: String,
-    //var products: MutableList<Product>,
-) : Parcelable
+    val address: String="",
+    val seller: String="",
+    val activator: String="",
+    val id: String="",
+) : Parcelable {
+    constructor() : this("", "", "","")
+}

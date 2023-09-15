@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "188407662980",
+    "project_id": "relevamientos-8f5b2",
+    "storage_bucket": "relevamientos-8f5b2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188407662980:android:1c09cdb24bfff0d445b5d1",
+        "android_client_info": {
+          "package_name": "com.example.relevamientos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188407662980-7cai59gd6q7dimb9kccmoc33ncqmutlk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHHQ-FXi62wC5DTMF6WZYsnMfKH3BCZwo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188407662980-7cai59gd6q7dimb9kccmoc33ncqmutlk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -16,7 +16,7 @@ class ClientsMapFragment : Fragment() {
 
     lateinit var v : View
 
-    lateinit var btn_back_map : Button
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,15 +24,10 @@ class ClientsMapFragment : Fragment() {
     ): View? {
         v = inflater.inflate(R.layout.fragment_clients_map, container, false)
 
-        btn_back_map = v.findViewById(R.id.btn_back_map)
-
         return v
     }
     override fun onStart() {
         super.onStart()
-        btn_back_map.setOnClickListener{
-            findNavController().popBackStack()
-        }
 
     }
 

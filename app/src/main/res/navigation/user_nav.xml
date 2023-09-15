@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/user_nav"
-    app:startDestination="@id/clientsFragment">
+    app:startDestination="@id/clients_list">
     <fragment
-        android:id="@+id/clientsFragment"
+        android:id="@+id/clients_list"
         android:name="com.example.relevamientos.fragments.ClientsFragment"
         android:label="fragment_clients"
         tools:layout="@layout/fragment_clients" >
@@ -24,6 +24,9 @@
         <argument
             android:name="Client"
             app:argType="com.example.relevamientos.entities.Client" />
+        <argument
+            android:name="Seller"
+            app:argType="com.example.relevamientos.entities.Seller" />
     </fragment>
     <fragment
         android:id="@+id/productsFragment"
