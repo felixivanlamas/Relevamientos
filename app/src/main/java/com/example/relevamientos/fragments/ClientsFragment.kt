@@ -1,24 +1,17 @@
 package com.example.relevamientos.fragments
-import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
+import android.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.relevamientos.R
 import com.example.relevamientos.adapters.ClientAdapter
-import com.example.relevamientos.entities.Client
-import com.google.android.gms.common.api.Response
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
 
 
 class ClientsFragment : Fragment() {
@@ -30,7 +23,7 @@ class ClientsFragment : Fragment() {
     lateinit var v : View
     private lateinit var viewModel: ClientsViewModel
     lateinit var recyclerClient: RecyclerView
-
+    lateinit var src_client : SearchView
     lateinit var adapter: ClientAdapter
 
     override fun onCreateView(
@@ -39,6 +32,7 @@ class ClientsFragment : Fragment() {
     ): View? {
         v = inflater.inflate(R.layout.fragment_clients, container, false)
         recyclerClient = v.findViewById(R.id.rec_clients)
+        src_client = v.findViewById(R.id.src_client)
 
         return  v
     }
@@ -51,10 +45,27 @@ class ClientsFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.getAllClients()
-        viewModel.getAllSellers()
-        adapter = ClientAdapter(viewModel.clients, viewModel.sellers){position ->
-            val client = viewModel.clients[position]
+
+        // Configura el SearchView
+        src_client.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Cuando el texto cambia, aplica el filtrado
+                viewModel.filterClients(newText ?: "")
+                return true
+            }
+        })
+
+        // Observa los cambios en la lista filtrada
+        viewModel.filteredClients.observe(viewLifecycleOwner) { filteredList ->
+            adapter.updateData(filteredList)
+        }
+
+        adapter = ClientAdapter(viewModel.allClients, viewModel.sellers){position ->
+            val client = adapter.clients[position]
             val seller = viewModel.findSeller(client.seller)
             if (seller != null) {
                 val action = ClientsFragmentDirections.actionClientsFragmentToClientDetailFragment(client, seller)

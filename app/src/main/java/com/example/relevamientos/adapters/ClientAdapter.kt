@@ -13,25 +13,30 @@ import com.example.relevamientos.entities.Client
 import com.example.relevamientos.entities.Seller
 
 class ClientAdapter(
-    var clients : MutableList<Client>,
-    var sellers : MutableList<Seller>,
+    var clients: List<Client>,
+    var sellers: MutableList<Seller>,
     var onClick: (Int) -> Unit
 
     ) : RecyclerView.Adapter<ClientAdapter.ClientHolder>(){
 
+    fun updateData(newClients: List<Client>) {
+        clients = newClients.toMutableList() // Actualizamos la lista de clientes
+        notifyDataSetChanged() // Notificamos al RecyclerView que los datos han cambiado
+    }
     class ClientHolder(v : View) : RecyclerView.ViewHolder(v)
     {
         private var view : View
         init {
             this.view = v
         }
+
         fun setClientAddress( address : String) {
-            val txt_address : TextView = view.findViewById( R.id.txt_address)
-            txt_address.text = address
+            val txtAddress : TextView = view.findViewById( R.id.txt_address)
+            txtAddress.text = address
         }
         fun setClientSeller( seller : String) {
-            val txt_activator : TextView = view.findViewById( R.id.txt_vendedor)
-            txt_activator.text = seller
+            val txtActivator : TextView = view.findViewById( R.id.txt_vendedor)
+            txtActivator.text = seller
         }
 
         fun getCard() : CardView{
