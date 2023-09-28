@@ -20,7 +20,11 @@
     <activity
         android:id="@+id/userActivity"
         android:name="com.example.relevamientos.activities.UserActivity"
-        android:label="UserActivity" />
+        android:label="UserActivity" >
+        <argument
+            android:name="idActivator"
+            app:argType="string" />
+    </activity>
     <fragment
         android:id="@+id/adminLoginFragment"
         android:name="com.example.relevamientos.fragments.AdminLoginFragment"

@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.relevamientos.R
 import com.example.relevamientos.activities.UserActivity
 import com.example.relevamientos.entities.Client
+import com.google.android.material.snackbar.Snackbar
 import org.w3c.dom.Text
 import java.net.URLEncoder
 
@@ -58,33 +59,22 @@ class ClientDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
         btn_qui.setOnClickListener{
-            var action = ClientDetailFragmentDirections.actionClientDetailFragmentToProductsFragment()
+            var action = ClientDetailFragmentDirections.actionClientDetailFragmentToProductsFragment(seller.phoneNumber,client.address)
             findNavController().navigate(action)
         }
 
         btn_wpp.setOnClickListener {
-            val activity = requireActivity() as UserActivity
-            val selectedProductsText = activity.getSelectedProducts()
-
-            // Construir el mensaje o dejarlo en blanco
-            val message = if (!selectedProductsText.isNullOrBlank()) {
-                "Cliente:\n${client.address}\n\nProductos para ejecutar la activación:\n$selectedProductsText"
-            } else {
-                "" // Mensaje en blanco si no hay productos seleccionados
-            }
-            // Crear una intención para abrir WhatsApp con el mensaje
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("whatsapp://send?phone=${seller.phoneNumber}&text=${URLEncoder.encode(message, "UTF-8")}")
-
             try {
+                // Crear una intención para abrir WhatsApp con el mensaje
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse("whatsapp://send?phone=${seller.phoneNumber}&text=${URLEncoder.encode("", "UTF-8")}")
+
+                // Iniciar la actividad de WhatsApp
                 startActivity(intent)
             } catch (e: ActivityNotFoundException) {
-                // WhatsApp no está instalado en el dispositivo
-                // Puedes manejar esto según tus necesidades
-                Log.e("WhatsApp", "WhatsApp no está instalado en el dispositivo.")
+                Snackbar.make(v, e.toString(), Snackbar.LENGTH_LONG).show()
             }
         }
-
     }
 
 }

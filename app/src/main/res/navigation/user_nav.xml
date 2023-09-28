@@ -32,7 +32,14 @@
         android:id="@+id/productsFragment"
         android:name="com.example.relevamientos.fragments.ProductsFragment"
         android:label="fragment_products"
-        tools:layout="@layout/fragment_products" />
+        tools:layout="@layout/fragment_products" >
+        <argument
+            android:name="sellerPhone"
+            app:argType="string" />
+        <argument
+            android:name="clientAddress"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/clients_map"
         android:name="com.example.relevamientos.fragments.ClientsMapFragment"
