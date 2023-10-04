@@ -27,14 +27,28 @@
 
     <Button
         android:id="@+id/btn_env"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_width="238dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="5dp"
         android:text="Notificar al vendedor"
         android:textSize="14sp"
         app:icon="@drawable/notificacion"
+        app:layout_constraintBottom_toTopOf="@+id/btn_env_group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_env_group"
+        android:layout_width="238dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="20dp"
+        android:text="Copiar quiebres"
+        android:textSize="14sp"
+        app:icon="@drawable/copiar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

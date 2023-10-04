@@ -6,9 +6,4 @@
         android:icon="@drawable/user_icon"
         android:title="Clientes"
         />
-    <item
-        android:id="@+id/clients_map"
-        android:icon="@drawable/gps_icon"
-        android:title="Location"
-        />
 </menu>

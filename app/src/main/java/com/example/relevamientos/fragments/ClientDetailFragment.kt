@@ -59,7 +59,7 @@ class ClientDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
         btn_qui.setOnClickListener{
-            var action = ClientDetailFragmentDirections.actionClientDetailFragmentToProductsFragment(seller.phoneNumber,client.address)
+            var action = ClientDetailFragmentDirections.actionClientDetailFragmentToProductsFragment(seller.phoneNumber,client)
             findNavController().navigate(action)
         }
 

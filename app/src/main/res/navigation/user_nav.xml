@@ -37,8 +37,8 @@
             android:name="sellerPhone"
             app:argType="string" />
         <argument
-            android:name="clientAddress"
-            app:argType="string" />
+            android:name="client"
+            app:argType="com.example.relevamientos.entities.Client" />
     </fragment>
     <fragment
         android:id="@+id/clients_map"

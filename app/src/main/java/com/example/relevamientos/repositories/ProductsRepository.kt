@@ -4,11 +4,13 @@ import com.example.relevamientos.entities.Product
 
 class ProductsRepository {
     var products : MutableList<Product> = mutableListOf()
-
     init {
-        products.add(Product(1,"Tresemme"))
+        products.add(Product(90,"Tresemme"))
+        products.add(Product(91,"Hellmanns Ajo/Ahumada x 250"))
+        products.add(Product(92,"Axe Bizzarrap"))
         products.add(Product(2,"Dove x 180"))
         products.add(Product(11,"Dove Botella x 200"))
+        products.add(Product(16,"Sedal x 190"))
         products.add(Product(3,"Ala SOU + Bot"))
         products.add(Product(4,"Ala SOU doypack"))
         products.add(Product(5,"Skip SOU + Bot"))
