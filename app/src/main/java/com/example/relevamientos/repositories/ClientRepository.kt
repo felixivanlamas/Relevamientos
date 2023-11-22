@@ -18,7 +18,6 @@ class ClientRepository {
             val client = document.toObject(Client::class.java)
             client?.let { clients.add(it) }
         }
-
         return clients
     }
 }

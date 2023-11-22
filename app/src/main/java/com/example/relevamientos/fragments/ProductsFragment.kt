@@ -1,5 +1,6 @@
 package com.example.relevamientos.fragments
 
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -13,13 +14,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.SearchView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.relevamientos.R
 import com.example.relevamientos.activities.UserActivity
 import com.example.relevamientos.adapters.ProductAdapter
+import com.example.relevamientos.entities.Break
 import com.example.relevamientos.repositories.ProductsRepository
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
@@ -36,15 +40,11 @@ class ProductsFragment : Fragment() {
 
    lateinit var v : View
    lateinit var recyclerProducts : RecyclerView
-   var repository: ProductsRepository = ProductsRepository()
-
    lateinit var adapter: ProductAdapter
-
    lateinit var btn_back_prod:Button
-
    lateinit var btnEnviarQuiebres : Button
-
    lateinit var btnCopiarQuiebres : Button
+   lateinit var searchProduct : SearchView
 
 
     override fun onCreateView(
@@ -56,50 +56,120 @@ class ProductsFragment : Fragment() {
         btn_back_prod = v.findViewById(R.id.btn_back_prod)
         btnEnviarQuiebres = v.findViewById(R.id.btn_env)
         btnCopiarQuiebres = v.findViewById(R.id.btn_env_group)
+        searchProduct = v.findViewById(R.id.searchProduct)
 
         return v
+    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProvider(this).get(ProductsViewModel::class.java)
     }
     override fun onStart() {
         super.onStart()
         var sellerPhone = ProductsFragmentArgs.fromBundle(requireArguments()).sellerPhone
         var client = ProductsFragmentArgs.fromBundle(requireArguments()).client
 
-        adapter = ProductAdapter(repository.products)
-        recyclerProducts.layoutManager = LinearLayoutManager(context)
-        recyclerProducts.adapter = adapter
+        viewModel.filteredProducts.observe(viewLifecycleOwner) { productList ->
+            // Configurar el adaptador con la nueva lista de productos filtrada
+            if (productList.isNotEmpty()) {
+                // Verificar si el adaptador ya está creado
+                if (::adapter.isInitialized) {
+                    // Si ya está creado, actualizar la lista de productos
+                    adapter.updateProducts(productList)
+                } else {
+                    // Si no está creado, crear uno nuevo y configurarlo
+                    adapter = ProductAdapter(productList)
+                    recyclerProducts.layoutManager = LinearLayoutManager(context)
+                    recyclerProducts.adapter = adapter
+                }
+
+                // Notificar cambios en el adaptador
+                adapter.notifyDataSetChanged()
+            } else {
+                // Manejo cuando la lista de productos filtrada está vacía
+                Log.d("Error", "La lista de productos filtrada está vacía.")
+            }
+        }
+
+        searchProduct.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Puedes manejar la acción de enviar si lo necesitas
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Filtra la lista de productos en función del texto del SearchView
+                viewModel.filterProducts(newText.orEmpty())
+                return true
+            }
+        })
+
         btn_back_prod.setOnClickListener{
             findNavController().popBackStack()
         }
 
         btnEnviarQuiebres.setOnClickListener {
-            val activity = requireActivity() as UserActivity
-            val selectedProducts = repository.products.filter { it.id in adapter.selectedProductIds }
-            /*val selectedProductIds = selectedProducts.map { it.id }*/
-            val selectedProductsText = selectedProducts.joinToString("\n") { it.description }
+            val selectedProductsIds = adapter.selectedProductIds
+            if(selectedProductsIds.isNotEmpty()){
+                val activity = requireActivity() as UserActivity
+                // Mostrar un cuadro de diálogo de confirmación
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("Confirmación")
+                builder.setMessage("¿Estás seguro de querer relevar el PDV con los quiebres seleccionados?")
+                builder.setPositiveButton("Sí") { _, _ ->
+                    val selectedProducts = viewModel.products.value?.filter { it?.id in adapter.selectedProductIds } ?: emptyList()
+                    val selectedProductsText = selectedProducts.joinToString("\n") { it.description }
+                    // Obtener la fecha actual
+                    val calendar = Calendar.getInstance()
 
-            // Construir el mensaje o dejarlo en blanco
-            val message = if (!selectedProductsText.isNullOrBlank()) {
-                "Cliente:\n${client.address}\n\nProductos para ejecutar la activación:\n$selectedProductsText"
-            } else {
-                "" // Mensaje en blanco si no hay productos seleccionados
+                    // Formatear la fecha en el formato "día/mes/año"
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val formattedDate = dateFormat.format(calendar.time)
+
+                    val breakItemList = mutableListOf<Break>()
+
+                    selectedProductsIds.forEach { productId ->
+                        val breakItem = Break(client.id, client.seller, client.activator, productId, formattedDate)
+                        breakItemList.add(breakItem)
+                    }
+
+
+                    // Agregar el Break al ViewModel
+                    viewModel.addBreaks(breakItemList) { success ->
+                        if (success) {
+                            val message = "Cliente:\n${client.address}\n\nProductos para ejecutar la activación:\n$selectedProductsText"
+                            val intent = Intent(Intent.ACTION_VIEW)
+                            intent.data = Uri.parse("whatsapp://send?phone=${sellerPhone}&text=${URLEncoder.encode(message, "UTF-8")}")
+                            Log.d("Mensaje Wpp Productos", message)
+                            try {
+                                activity.setSelectedProducts("")
+                                startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                Log.e("WhatsApp", "WhatsApp no está instalado en el dispositivo.")
+                            }
+                        } else {
+                            // Manejo de errores si la operación con el ViewModel falla
+                            // Podrías mostrar un mensaje al usuario o realizar otras acciones según sea necesario
+                            Log.e("Add Break", "Error al agregar Break al ViewModel")
+                            Toast.makeText(activity, "Error al agregar Break", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                builder.setNegativeButton("No") { _, _ ->
+                    // No hacer nada si el usuario elige no confirmar
+                }
+
+                val dialog = builder.create()
+                dialog.show()
             }
-            // Crear una intención para abrir WhatsApp con el mensaje
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("whatsapp://send?phone=${sellerPhone}&text=${URLEncoder.encode(message, "UTF-8")}")
-
-            try {
-                activity.setSelectedProducts("")
-                startActivity(intent)
-            } catch (e: ActivityNotFoundException) {
-                // WhatsApp no está instalado en el dispositivo
-                // Puedes manejar esto según tus necesidades
-                Log.e("WhatsApp", "WhatsApp no está instalado en el dispositivo.")
+            else{
+                Toast.makeText(activity, "No seleccionaste ningún producto", Toast.LENGTH_SHORT).show()
             }
         }
 
         btnCopiarQuiebres.setOnClickListener {
             val activity = requireActivity() as UserActivity
-            val selectedProducts = repository.products.filter { it.id in adapter.selectedProductIds }
+            val selectedProducts = viewModel.products.value?.filter { it?.id in adapter.selectedProductIds } ?: emptyList()
             val selectedProductsText = selectedProducts.joinToString("\n") { it.description }
 
             // Obtener la fecha actual

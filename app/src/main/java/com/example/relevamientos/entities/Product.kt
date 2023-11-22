@@ -1,9 +1,11 @@
 package com.example.relevamientos.entities
 
 data class Product(
-    val id: Int = -1,
+    val id: String = "",
     val description: String="",
+    val categoria: String="",
+    val habilitado: Boolean= true,
 ){
-    constructor() : this(-1,"")
+    constructor() : this("","","",true)
 }
 

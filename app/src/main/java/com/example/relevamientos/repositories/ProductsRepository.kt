@@ -1,8 +1,17 @@
 package com.example.relevamientos.repositories
 
 import com.example.relevamientos.entities.Product
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
 class ProductsRepository {
+    private val db = Firebase.firestore
+    private val collection = db.collection("products")
+    suspend fun getAllProducts(): MutableList<Product>{
+        return collection.get().await().toObjects(Product::class.java)
+    }
+    /*
     var products : MutableList<Product> = mutableListOf()
     init {
         products.add(Product(90,"Tresemme"))
@@ -22,5 +31,5 @@ class ProductsRepository {
         products.add(Product(8,"Hellmanns Clasica x 500"))
         products.add(Product(9,"Hellmanns Ketchup x 250"))
         products.add(Product(10,"Savora x 250"))
-    }
+    }*/
 }

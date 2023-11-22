@@ -23,7 +23,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_env"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_back_prod" />
+        app:layout_constraintTop_toBottomOf="@+id/searchProduct" />
 
     <Button
         android:id="@+id/btn_env"
@@ -50,5 +50,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <SearchView
+        android:id="@+id/searchProduct"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_back_prod" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
